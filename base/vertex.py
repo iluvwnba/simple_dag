@@ -1,5 +1,6 @@
 from __future__ import annotations
-
+from typing import Union
+from base import dag
 '''
 From airflow docs
 chain(t1, [t2, t3], [t4, t5], t6)
@@ -28,7 +29,7 @@ Questions
 class Vertex:
     def __init__(self, v_id: int, dag: DAG):
         self.v_id: int = v_id
-        self.dag = DAG
+        self.dag = dag
 
     def __eq__(self, other):
         # Are they the same type or have the same id
@@ -54,6 +55,9 @@ class Vertex:
     def get_downstream(self) -> Vertex:
         pass
 
-    def execute(self):
+    def chain(*tasks: Union[Vertex, List[Vertex]]):
+        #Given a list of tasks, build dependency chain, requires iterable
         pass
 
+    def execute(self):
+        pass
