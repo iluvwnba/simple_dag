@@ -1,6 +1,7 @@
 from __future__ import annotations
-from typing import Union
-from base import dag
+
+from dagger.base.dag import DAG
+
 '''
 From airflow docs
 chain(t1, [t2, t3], [t4, t5], t6)
@@ -23,21 +24,31 @@ t5.set_downstream(t6)
 
 '''
 Known
-Needs a DAG assigning to each
+TODO Will be rewitten to work with new DAG.py
 Questions
 '''
+
+
 class Vertex:
     def __init__(self, v_id: int, dag: DAG):
         self.v_id: int = v_id
         self.dag = dag
 
+    def __key(self):
+        return (self.v_id)
+
+    def __hash__(self):
+        return hash(self.__key())
+
     def __eq__(self, other):
         # Are they the same type or have the same id
-        pass
+        if isinstance(other, Vertex):
+            return self.__key() == other.__key()
+        return NotImplemented
 
     def set_dag(self, d: DAG):
-        #Replace with @property and @setter annotations
-        #check if exists
+        # Replace with @property and @setter annotations
+        # check if exists
         self.dag = d
 
     def get_vertex_id(self) -> int:
@@ -46,17 +57,14 @@ class Vertex:
     def set_downstream(self, v: Vertex):
         pass
 
-    def set_upstream(self, v:Vertex):
+    def set_upstream(self, v: Vertex):
         pass
 
-    #Do we need a list return version of this
+    # Do we need a list return version of this
     def get_upstream(self) -> Vertex:
         pass
-    def get_downstream(self) -> Vertex:
-        pass
 
-    def chain(*tasks: Union[Vertex, List[Vertex]]):
-        #Given a list of tasks, build dependency chain, requires iterable
+    def get_downstream(self) -> Vertex:
         pass
 
     def execute(self):
