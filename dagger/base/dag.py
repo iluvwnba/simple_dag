@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from collections import deque, defaultdict
-from typing import List, Dict, Iterator, DefaultDict
+from typing import List, Dict, Iterator, DefaultDict, Deque
 
 
 class DAGError(Exception):
@@ -95,6 +95,16 @@ class GraphBase:
         else:
             raise Exception()
 
+    def print_tree(self) -> None:
+        def print_downstream(v: Vertex, level=0):
+            print((" " * level * 4) + str(v))
+            level += 1
+            for v_1 in self.adj(v):
+                print_downstream(v_1, level=level)
+
+        # Get first element of the graph
+        print_downstream(list(self._adj)[0])
+
     def __len__(self):
         return self.no_of_edges()
 
@@ -107,10 +117,10 @@ class DAG(GraphBase):
         self._visited: Dict[(str, bool)] = dict()
         # is vertex on the stack
         self._explore: Dict[(str, bool)] = dict()
-        self._cycle = deque()
+        self._topological_order: Deque[Vertex] = deque()
 
     def _has_cycle(self) -> bool:
-        return not len(self._cycle)
+        return not len(self._topological_order)
 
     def check_cycle(self) -> bool:
         V: List[Vertex] = list(self._adj)
@@ -144,10 +154,13 @@ class DAG(GraphBase):
 
         self._explore[v] = False
         self._visited[v] = True
+        self._topological_order.appendleft(v)
         return False
 
-    def validate_DAG(self):
-        pass
+    def topological_order(self) -> Iterator[Vertex]:
+        if self._topological_order:
+            return self._topological_order
+        return list()
 
     '''
     Expected File Format(txt)
