@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import uuid
 from collections import deque, defaultdict
-from typing import List, Dict, Iterator, DefaultDict, Deque
+from typing import List, Dict, Iterator, DefaultDict, Deque, Optional
+
+from dagger.base.vertex import Vertex
 
 
 class DAGError(Exception):
@@ -13,19 +14,6 @@ class DAGError(Exception):
 Known
 Each point is called a vertex - noted using v or _v
 '''
-
-
-class Vertex:
-    def __init__(self, v_id: str = None):
-        if v_id:
-            self.id = v_id
-        else:
-            # Validate is unique
-            self.id: str = str(uuid.uuid4())[:4]
-
-    def __repr__(self):
-        return self.id
-
 
 '''
 From airflow docs
@@ -162,6 +150,15 @@ class DAG(GraphBase):
             return self._topological_order
         return list()
 
+    # Context Manager ------------------------
+    def __enter__(self):
+        DagContext.push_context_managed_dag(self)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        DagContext.pop_context_managed_dag()
+    # /Context Manager -----------------------
+
     '''
     Expected File Format(txt)
     number of vectors
@@ -182,3 +179,41 @@ class DAG(GraphBase):
                 v = line.split(' ')
                 d.add_edge(Vertex(v_id=v[0]), Vertex(v_id=v[1]))
         return d
+
+
+class DagContext:
+    """
+    DAG context is used to keep the current DAG when DAG is used as ContextManager.
+
+    You can use DAG as context:
+
+    .. code-block:: python
+
+        with DAG() as dag:
+
+    If you do this the context stores the DAG and whenever new task is created, it will use
+    such stored DAG as the parent DAG.
+
+    """
+
+    _context_managed_dag: Optional[DAG] = None
+    _previous_context_managed_dags: List[DAG] = []
+
+    @classmethod
+    def push_context_managed_dag(cls, dag: DAG):
+        if cls._context_managed_dag:
+            cls._previous_context_managed_dags.append(cls._context_managed_dag)
+        cls._context_managed_dag = dag
+
+    @classmethod
+    def pop_context_managed_dag(cls) -> Optional[DAG]:
+        old_dag = cls._context_managed_dag
+        if cls._previous_context_managed_dags:
+            cls._context_managed_dag = cls._previous_context_managed_dags.pop()
+        else:
+            cls._context_managed_dag = None
+        return old_dag
+
+    @classmethod
+    def get_current_dag(cls) -> Optional[DAG]:
+        return cls._context_managed_dag

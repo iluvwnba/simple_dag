@@ -1,9 +1,9 @@
-from dagger.base import dag
+from dagger.base import dag,vertex
 
 
 def run():
     d = dag.DAG()
-    a, b, c = dag.Vertex(v_id="a"), dag.Vertex(v_id="b"), dag.Vertex(v_id="c")
+    a, b, c = vertex.Vertex(v_id="a"), vertex.Vertex(v_id="b"), vertex.Vertex(v_id="c")
     d.add_edge(a, b)
     d.add_edge(b, c)
     d.add_edge(a, c)
