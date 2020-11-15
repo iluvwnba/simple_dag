@@ -12,8 +12,6 @@ class DAGError(Exception):
 '''
 Known
 Each point is called a vertex - noted using v or _v
-TODO - 
-- ACII tree view implementation
 '''
 
 
@@ -55,7 +53,6 @@ class GraphBase:
 
     def __init__(self):
         self._in_degree: Dict[int, int]() = dict()
-        # TODO - Logic for adding vertex count
         self._V: int = 0
         self._E: int = 0
         self._adj: DefaultDict[(Vertex, List[Vertex])] = defaultdict(list)
@@ -75,7 +72,6 @@ class GraphBase:
         return len(self._adj[v])
 
     def validate_vertex(self, v: Vertex) -> bool:
-        # TODO -- Is this needed now, could validate id is unique
         return True
 
     '''
@@ -171,7 +167,5 @@ class DAG(GraphBase):
             d._V = int(next(f))
             for line in f:
                 v = line.split(' ')
-                # TODO -- Create objects first or check exists?
-                print("p1: {}   ---   p2: {}".format(v[0], v[1]))
                 d.add_edge(Vertex(v_id=v[0]), Vertex(v_id=v[1]))
         return d
