@@ -1,5 +1,5 @@
 # simple_dag
-Learning dags through creating one
+Learning Orchestration and Execution through creating one
 
 ## TODO
 - ~~Create dagbase~~
