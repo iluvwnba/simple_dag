@@ -1,5 +1,5 @@
 # simple_dag
-Learning dags through creating one
+Learning Orchestration and Execution through creating a Data Pipeline Orchestration service with Pluggable Operators
 
 ## TODO
 - ~~Create dagbase~~
