@@ -13,6 +13,8 @@ Learning dags through creating one
 - Executor Base Class
 - Concurrent Execution
 - API for DAG
+    - ~~Simple Flask Service~~
+    - Separation of DAG's and Web Service
     - Operator Status
 
 ## Low priority TODO

@@ -7,7 +7,7 @@ def run():
     d.add_edge(a, b)
     d.add_edge(b, c)
     d.add_edge(a, c)
-    print(d.check_cycle())
+    return d, d.check_cycle()
 
 
 if __name__ == '__main__':
