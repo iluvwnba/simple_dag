@@ -11,6 +11,7 @@ Learning dags through creating one
 - ~~Operator Base Class~~
 - ~~Bash Operator~~
 - Executor Base Class
+- Concurrent Execution
 - API for DAG
     - Operator Status
 
