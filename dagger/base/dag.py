@@ -146,9 +146,9 @@ class DAG(GraphBase):
         return False
 
     def topological_order(self) -> Iterator[Vertex]:
-        if self._topological_order:
-            return self._topological_order
-        return list()
+        if not self._topological_order:
+            self.check_cycle()
+        return self._topological_order
 
     # Context Manager ------------------------
     def __enter__(self):
