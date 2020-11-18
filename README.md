@@ -10,7 +10,7 @@ Learning Orchestration and Execution through creating a Data Pipeline Orchestrat
 - ~~Rshift Operator within Context~~
 - ~~Operator Base Class~~
 - ~~Bash Operator~~
-- Executor Base Class
+- ~~Executor Base Class~~
 - Concurrent Execution
 - API for DAG
     - ~~Simple Flask Service~~

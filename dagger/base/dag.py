@@ -145,7 +145,7 @@ class DAG(GraphBase):
         self._topological_order.appendleft(v)
         return False
 
-    def topological_order(self) -> Iterator[Vertex]:
+    def topological_order(self) -> deque[Vertex]:
         if not self._topological_order:
             self.check_cycle()
         return self._topological_order

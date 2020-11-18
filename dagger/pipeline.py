@@ -1,12 +1,12 @@
-from dagger.base import dag, vertex
+from dagger.base import dag, vertex, executor
 
 
 def run() -> dag.DAG:
-    t1, t2, t3, t4, t5, t6 = vertex.Vertex(v_id="t1"), vertex.Vertex(v_id="t2"), vertex.Vertex(v_id="t3"), \
-                             vertex.Vertex(v_id="t4"), vertex.Vertex(v_id="t5"), vertex.Vertex(v_id="t6")
+    t1, t2 = vertex.BashOperator(v_id="t1", cmd="ls", delay=5), vertex.BashOperator(v_id="t2", cmd="ls")
     with dag.DAG() as d:
-        t1 >> t2 >> t4 >> t6
-        t1 >> t3 >> t5
-        t5 >> t6
+        t1 >> t2
+
+    e = executor.BaseExecutor(d)
+    e.execute()
 
     return d
