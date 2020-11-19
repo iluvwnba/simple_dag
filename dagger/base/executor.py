@@ -1,8 +1,5 @@
 from dagger.base.dag import DAG
 from dagger.base.vertex import Operator
-import subprocess
-import time
-
 
 class BaseExecutor:
     def __init__(self, dag: DAG):
@@ -12,10 +9,20 @@ class BaseExecutor:
         """
             Execute DAG in sync
         """
-        opp: Operator
-        for opp in self._dag.topological_order():
-            opp.claim_lock()
-            time.sleep(opp.get_delay())
-            out_b = subprocess.check_output([opp.cmd])
-            opp.release_lock()
-            print(out_b.decode('utf-8'))
+        pass
+
+
+class LocalExecutor(BaseExecutor):
+    #Turn into something a DAG can push too, execution queue
+    def __init__(self, dag: DAG):
+        super().__init__(dag)
+        self._execution_ops = dag.topological_order()
+
+    def execute(self):
+        while self._execution_ops:
+            op = self._execution_ops.popleft()
+            try:
+                op: Operator
+                next(op.run())
+            except StopIteration:
+                pass

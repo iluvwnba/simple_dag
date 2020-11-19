@@ -6,7 +6,7 @@ def run() -> dag.DAG:
     with dag.DAG() as d:
         t1 >> t2
 
-    e = executor.BaseExecutor(d)
+    e = executor.LocalExecutor(d)
     e.execute()
 
     return d

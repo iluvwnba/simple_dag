@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import deque, defaultdict
 from typing import List, Dict, Iterator, DefaultDict, Deque, Optional
 
-from dagger.base.vertex import Vertex
+from dagger.base.vertex import Operator
 
 
 class DAGError(Exception):
@@ -43,7 +43,7 @@ class GraphBase:
         self._in_degree: Dict[int, int]() = dict()
         self._V: int = 0
         self._E: int = 0
-        self._adj: DefaultDict[(Vertex, List[Vertex])] = defaultdict(list)
+        self._adj: DefaultDict[(Operator, List[Operator])] = defaultdict(list)
 
     def no_of_edges(self) -> int:
         return self._E
@@ -51,15 +51,15 @@ class GraphBase:
     def no_of_vertices(self) -> int:
         return self._V
 
-    def in_degree(self, v: Vertex):
+    def in_degree(self, v: Operator):
         self.validate_vertex(v)
         return self._in_degree[v]
 
-    def out_degree(self, v: Vertex):
+    def out_degree(self, v: Operator):
         self.validate_vertex(v)
         return len(self._adj[v])
 
-    def validate_vertex(self, v: Vertex) -> bool:
+    def validate_vertex(self, v: Operator) -> bool:
         return True
 
     '''
@@ -67,12 +67,12 @@ class GraphBase:
     @return the adjacent vertex
     '''
 
-    def adj(self, v: Vertex) -> Iterator[Vertex]:
+    def adj(self, v: Operator) -> Iterator[Operator]:
         if not self.validate_vertex(v):
             raise Exception()
         return self._adj[v]
 
-    def add_edge(self, v: Vertex, w: Vertex):
+    def add_edge(self, v: Operator, w: Operator):
         if self.validate_vertex(v) and self.validate_vertex(w):
             self._adj[v].append(w)
             if w in self._in_degree:
@@ -84,7 +84,7 @@ class GraphBase:
             raise Exception()
 
     def print_tree(self) -> None:
-        def print_downstream(v: Vertex, level=0):
+        def print_downstream(v: Operator, level=0):
             print((" " * level * 4) + str(v))
             level += 1
             for v_1 in self.adj(v):
@@ -105,13 +105,13 @@ class DAG(GraphBase):
         self._visited: Dict[(str, bool)] = dict()
         # is vertex on the stack
         self._explore: Dict[(str, bool)] = dict()
-        self._topological_order: Deque[Vertex] = deque()
+        self._topological_order: Deque[Operator] = deque()
 
     def _has_cycle(self) -> bool:
         return not len(self._topological_order)
 
     def check_cycle(self) -> bool:
-        V: List[Vertex] = list(self._adj)
+        V: List[Operator] = list(self._adj)
         for v in V:
             if v not in self._visited:
                 if self._dfs(v):
@@ -124,7 +124,7 @@ class DAG(GraphBase):
     https://algs4.cs.princeton.edu/42digraph/Topological.java.html
     '''
 
-    def _dfs(self, v: Vertex) -> bool:
+    def _dfs(self, v: Operator) -> bool:
         if v in self._visited:
             if self._visited[v]:
                 return False
@@ -145,7 +145,7 @@ class DAG(GraphBase):
         self._topological_order.appendleft(v)
         return False
 
-    def topological_order(self) -> deque[Vertex]:
+    def topological_order(self) -> deque[Operator]:
         if not self._topological_order:
             self.check_cycle()
         return self._topological_order
@@ -177,7 +177,7 @@ class DAG(GraphBase):
             d._V = int(next(f))
             for line in f:
                 v = line.split(' ')
-                d.add_edge(Vertex(v_id=v[0]), Vertex(v_id=v[1]))
+                d.add_edge(Operator(v_id=v[0]), Operator(v_id=v[1]))
         return d
 
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 import uuid
+import time
+import subprocess
 
 
 class OperatorException(Exception):
@@ -48,11 +50,21 @@ class Operator(Vertex):
     def get_delay(self) -> int:
         return self._delay
 
-    def execute(self):
+    def run(self):
         pass
 
 
 class BashOperator(Operator):
     def __init__(self, cmd: str, delay: int = 0, v_id: str = None, p_weight: int = 1):
         super(BashOperator, self).__init__(cmd, delay, v_id, p_weight)
-        self.cmd: str = cmd
+
+    def run(self) -> None:
+        """
+            Execute DAG in sync
+        """
+        self.claim_lock()
+        time.sleep(self.get_delay())
+        out_b = subprocess.check_output([self.cmd])
+        self.release_lock()
+        print(out_b.decode('utf-8'))
+        yield out_b.decode('utf-8')
